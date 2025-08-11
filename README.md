@@ -1,4 +1,4 @@
-# 📊 Time Series Forecasting Frontend (React + Vite)
+#  Time Series Forecasting Frontend (React + Vite)
 
 Frontend for the **Time Series Forecasting WebApp**.  
 Built with **React + Vite**, styled using **TailwindCSS**, and integrated with a **FastAPI backend** for model training, predictions, and visualization.
@@ -22,12 +22,14 @@ Built with **React + Vite**, styled using **TailwindCSS**, and integrated with a
 
 ---
 ## Project Structure
+```
 src/
   ├── components/     # Reusable UI components
   ├── pages/          # Main pages
   ├── services/       # API call utilities
   ├── App.jsx         # Root component
   └── main.jsx        # App entry point
+```
 
 ## 🚀 How to Run
 
