@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { foreCastService } from "../service/apiService";
 import TrainModel from "./TrainModel";
 import ForecastChart from "./ForecastChart";
@@ -7,76 +7,100 @@ export const ForecastViewer = () => {
   const [periods, setPeriods] = useState(24);
   const [forecastData, setForecastData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
+  const [modelDetails, setModelDetails] = useState(null);
+  const [inputError, setInputError] = useState(""); 
 
-  
-  const validateInput = (value) => {
-    if (!value || isNaN(value)) {
-      return "Please enter a valid number";
+  const handleModelTrained = (data) => {
+    setModelDetails(data);
+  };
+
+  const handlePeriodChange = (e) => {
+    const value = e.target.value;
+
+    
+    if (value === "" || isNaN(value)) {
+      setInputError("Please enter a valid number");
+      setPeriods("");
+    } else if (value <= 0) {
+      setInputError("Number of periods must be greater than 0");
+      setPeriods(value);
+    } else if (value > 1000) {
+      setInputError("Maximum allowed is 1000 periods");
+      setPeriods(value);
+    } else {
+      setInputError("");
+      setPeriods(value);
     }
-    if (value <= 0) {
-      return "Number of periods must be greater than 0";
-    }
-    if (value > 1000) {
-      return "Number of periods cannot exceed 1000"; 
-    }
-    return "";
   };
 
   const getForecast = async () => {
-    const validationError = validateInput(Number(periods));
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    if (!modelDetails) return setError("Please train a model first.");
+    if (inputError || !periods) return setError("Please enter a valid number of periods.");
+
     setError("");
     setLoading(true);
+
     try {
-      const response = await foreCastService(Number(periods));
-      if (response.success) {
-        setForecastData(response.data);
+      const res = await foreCastService(
+        modelDetails.model_name,
+        modelDetails.version,
+        modelDetails.file_name,
+        Number(periods)
+      );
+
+      if (res.success) {
+        setForecastData(res.data);
       } else {
-        setError(response.message || "Error fetching forecast data");
+        setError(res.message);
       }
-    } catch (error) {
-      setError("Unexpected error fetching forecast data");
+    } catch {
+      setError(" Error fetching forecast");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getForecast();
-  }, []);
-
   return (
     <div style={{ padding: "20px" }}>
-      <TrainModel />
-      <br />
+      <TrainModel onModelTrained={handleModelTrained} />
       <br />
 
-      <div style={{ marginBottom: "16px" }}>
+      {modelDetails && (
+        <div style={{ marginBottom: "20px" }}>
+          <h4>Trained Model Details</h4>
+          <p><strong>Model:</strong> {modelDetails.model_name}</p>
+          <p><strong>Version:</strong> {modelDetails.version}</p>
+          <p><strong>File:</strong> {modelDetails.file_name}</p>
+        </div>
+      )}
+
+      <div style={{ marginTop: "20px" }}>
+        <h3>Forecast</h3>
         <input
           type="number"
-          placeholder="Enter number of periods"
-          value={periods}
-          onChange={(e) => setPeriods(e.target.value)}
           min="1"
-          style={{ marginRight: "12px", padding: "6px 10px" }}
+          max="1000"
+          value={periods}
+          onChange={handlePeriodChange}
+          placeholder="Enter number of periods"
+          style={{
+            marginRight: "12px",
+            padding: "6px",
+            borderColor: inputError ? "red" : "#ccc",
+          }}
         />
-        <button
-          onClick={getForecast}
-          disabled={loading}
-          style={{ padding: "6px 16px" }}
-        >
+        <button onClick={getForecast} disabled={loading}>
           {loading ? "Fetching..." : "Get Forecast"}
         </button>
+
+        
+        {inputError && <p style={{ color: "red", marginTop: "6px" }}>{inputError}</p>}
       </div>
 
-      
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
 
-      {forecastData && forecastData.length > 0 && (
+      {forecastData?.length > 0 && (
         <div style={{ marginTop: "30px" }}>
           <ForecastChart data={forecastData} />
         </div>

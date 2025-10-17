@@ -4,7 +4,7 @@ import { Chart as ChartJS } from "chart.js/auto";
 import moment from "moment";
 
 export default function ForecastChart({ data }) {
-  // Define labels first
+
   const labels = data.map(d => moment(d.ds).format("MMM DD, HH:mm"));
 
   const lineChartData = {
