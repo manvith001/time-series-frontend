@@ -1,26 +1,31 @@
-#  Time Series Forecasting Frontend (React + Vite)
+# 📈Time Series Forecasting Frontend (React + Vite)
 
 Frontend for the **Time Series Forecasting WebApp**.  
-Built with **React + Vite**, styled using **TailwindCSS**, and integrated with a **FastAPI backend** for model training, predictions, and visualization.
+Built with **React + Vite**, styled using **TailwindCSS**, and integrated with a **FastAPI backend** for model training, predictions, and interactive visualization.
 
 ---
 
-## 📌 Features
-- Interactive UI to trigger **model training**
+## 🚀Features
+- Interactive UI to **upload CSV datasets**
+- Trigger **model training** for Prophet, XGBoost, or CatBoost
 - Request forecasts for **next N hours/days**
-- Display results on an **interactive time series chart**
-- Fetch and display **model performance metrics (MAE, RMSE)**
+- Display results on **interactive time series charts**
+- Fetch and display **model performance metrics (MAE, RMSE, R²)**
+- Responsive layout using **TailwindCSS**
 - Works with **local**, **Docker**, or **AWS-hosted** backend
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 - **Framework:** React (Vite)
 - **Styling:** TailwindCSS
 - **Charts:** Chart.js / react-chartjs-2
-- **API Communication:** Axios
+- **HTTP Client:** Axios
+- **State Management:** React hooks
 
 ---
+
+
 ## Project Structure
 ```
 src/
@@ -53,5 +58,25 @@ bash
 Copy
 Edit
 npm run dev
-Frontend will run at: http://localhost:5173
+Frontend will run at: http://localhost:8000
+
+## Usage Flow
+
+-Upload CSV – Upload your hourly dataset via the UI
+
+-Train Model – Select Prophet, XGBoost, or CatBoost to train
+
+-View Metrics – Check MAE, RMSE, and R² on the dashboard
+
+-Predict – Forecast the next N hours/days
+
+-Visualize – Interactive chart displays historical and forecasted values
+
+##Notes
+
+Ensure the backend is running and reachable at VITE_API_BASE_URL
+
+File uploads and predictions are handled asynchronously
+
+Metrics are fetched automatically after training
 
